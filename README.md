@@ -4,6 +4,6 @@
 
 ```bash
 mvn clean package
-java -jar target\issue144-1.0-SNAPSHOT.jar
+java -jar target/issue144-1.0-SNAPSHOT.jar
 curl -u user:pw http://localhost:8080/get
 ```
