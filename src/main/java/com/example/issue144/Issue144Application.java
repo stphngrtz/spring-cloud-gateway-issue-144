@@ -12,6 +12,8 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import reactor.core.publisher.Mono;
 
 @SpringBootApplication
 @EnableWebFluxSecurity
@@ -35,7 +37,7 @@ public class Issue144Application {
         return security.authorizeExchange()
                 .anyExchange().authenticated()
                 .and()
-                .httpBasic()
+                .httpBasic().securityContextRepository(new WebSessionServerSecurityContextRepository())
                 .and()
                 .build();
     }
@@ -47,7 +49,7 @@ public class Issue144Application {
                         .order(8000)
                         .path("/**")
                         .filter((exchange, chain) -> {
-                            exchange.getPrincipal().doOnNext(principal -> log.info("principal.name: {}", principal.getName()));
+                            exchange.getPrincipal().switchIfEmpty(Mono.just(() -> "empty")).subscribe(p -> log.info("principal.name: {}", p.getName()));
                             return chain.filter(exchange);
                         })
                         .uri("http://httpbin.org:80")
