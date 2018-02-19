@@ -48,10 +48,13 @@ public class Issue144Application {
                 .route("httpbin", r -> r
                         .order(8000)
                         .path("/**")
-                        .filter((exchange, chain) -> {
-                            exchange.getPrincipal().switchIfEmpty(Mono.just(() -> "empty")).subscribe(p -> log.info("principal.name: {}", p.getName()));
-                            return chain.filter(exchange);
-                        })
+                        .filter((exchange, chain) ->
+                            exchange
+                                    .getPrincipal()
+                                    .switchIfEmpty(Mono.just(() -> "empty"))
+                                    .doOnSuccess(p -> log.info("principal.name: {}", p.getName()))
+                                    .then(chain.filter(exchange))
+                        )
                         .uri("http://httpbin.org:80")
                 )
                 .build();
