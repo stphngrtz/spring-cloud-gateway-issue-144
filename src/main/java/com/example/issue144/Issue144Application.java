@@ -12,7 +12,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import reactor.core.publisher.Mono;
 
 @SpringBootApplication
@@ -37,7 +36,7 @@ public class Issue144Application {
         return security.authorizeExchange()
                 .anyExchange().authenticated()
                 .and()
-                .httpBasic().securityContextRepository(new WebSessionServerSecurityContextRepository())
+                .httpBasic()
                 .and()
                 .build();
     }
